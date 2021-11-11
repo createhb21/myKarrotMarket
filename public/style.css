@@ -1,0 +1,9 @@
+.container-fluid {
+  background:white;
+  
+}
+
+.navbar-brand {
+  font-size: 1.3rem;
+  font-weight: bold;
+}
