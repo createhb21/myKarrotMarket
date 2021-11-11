@@ -12,6 +12,10 @@
 /.next/
 /out/
 
+# node
+.node
+.node_modules
+
 # production
 /build
 
