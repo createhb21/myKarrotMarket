@@ -4,3 +4,4 @@
 - Firebase
 - Next.js
 - KarrotFlame
+- jQuery
