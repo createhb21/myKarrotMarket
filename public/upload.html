@@ -73,12 +73,23 @@ firebase.initializeApp(firebaseConfig);
       var storagePath = storageRef.child('image/' + file.name);
       var sendImageData = storagePath.put(file)
 
-
-      var data = { 
+      sendImageData.on( 'state_changed', 
+    // 변화시 동작하는 함수 
+    null, 
+    //에러시 동작하는 함수
+    (error) => {
+      console.error('실패사유는', error);
+    }, 
+    // 성공시 동작하는 함수
+    () => {
+      sendImageData.snapshot.ref.getDownloadURL().then((url) => {
+        console.log('업로드된 경로는', url);
+        var data = { 
         제목: $('#title').val(), 
         가격: +$('#price').val(),
         내용: $('#content').val(),
         날짜 : new Date(),
+        이미지 : `${url}`
       }
       db.collection('product').add(data).then((res)=>{
         console.log(res.id);
@@ -86,6 +97,16 @@ firebase.initializeApp(firebaseConfig);
       }).catch((err) => { 
         console.log(err)
       })
+      });
+    }
+);
+
+// 일반적으로 
+// 1. 이미지 먼저 업로드하고
+// 2. 성공하면 DB에 이미지 url 저장한다.
+
+
+      
     })
 
   </script>
