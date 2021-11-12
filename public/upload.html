@@ -64,8 +64,16 @@ firebase.initializeApp(firebaseConfig);
   <script>
 
     const db = firebase.firestore();
+    const storage = firebase.storage();
 
     $('#send').click(function(){
+
+      var file = document.querySelector('#image').files[0];
+      var storageRef = storage.ref();
+      var storagePath = storageRef.child('image/' + file.name);
+      var sendImageData = storagePath.put(file)
+
+
       var data = { 
         제목: $('#title').val(), 
         가격: +$('#price').val(),
