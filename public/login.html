@@ -54,58 +54,47 @@ firebase.initializeApp(firebaseConfig);
     </div>
   </nav>
 
+
   <div class="container mt-3">
-    <input type="text" class="form-control mt-2" id="title" placeholder="title">
-    <textarea class="form-control mt-2" id="content">content</textarea>
-    <input type="text" class="form-control mt-2" id="price" placeholder="price">
-    <input class="form-control mt-2" type="file" id="image">
-    <button class="btn btn-danger mt-3" id="send">올리기</button>
+    <div class="mb-3">
+      <input type="text" class="form-control" placeholder="name" id="name-new">
+    </div>
+    <div class="mb-3">
+      <input type="email" class="form-control" placeholder="email" id="email-new">
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="pw" id="pw-new">
+    </div>
+    <button type="submit" class="btn btn-primary" id="register">가입하기</button>
   </div>
+
+
 
   <script>
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    $('#send').click(function(){
+    $('#register').click(function(){
 
-      var file = document.querySelector('#image').files[0];
-      var storageRef = storage.ref();
-      var storagePath = storageRef.child('image/' + file.name);
-      var sendImageData = storagePath.put(file)
+      var 이메일 = $('#email-new').val() 
+      var 패스워드 = $('#pw-new').val() 
 
-      sendImageData.on( 'state_changed', 
-        // 변화시 동작하는 함수 
-        null, 
-        //에러시 동작하는 함수
-        (error) => {
-          console.error('실패사유는', error);
-        }, 
-        // 성공시 동작하는 함수
-        () => {
-          sendImageData.snapshot.ref.getDownloadURL().then((url) => {
-            console.log('업로드된 경로는', url);
-            var data = { 
-            제목: $('#title').val(), 
-            가격: +$('#price').val(),
-            내용: $('#content').val(),
-            날짜 : new Date(),
-            이미지 : `${url}`
-          }
-          db.collection('product').add(data).then((res)=>{
-            console.log(res.id);
-            window.location.href = "/index.html"
-          }).catch((err) => { 
-            console.log(err)
-          })
-          });
-        }
-      );
-// 일반적으로 
-// 1. 이미지 먼저 업로드하고
-// 2. 성공하면 DB에 이미지 url 저장한다.
-  })
+      firebase.auth().createUserWithEmailAndPassword(이메일, 패스워드).then((result)=>{
+      console.log(result)
+      console.log(result.user)
+      window.location.href = "/index.html"
+    })
+    })
+
+    
+
+
+
+
 
   </script>
+
+
 
 </body>
 
