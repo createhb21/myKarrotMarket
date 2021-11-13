@@ -77,6 +77,7 @@ firebase.initializeApp(firebaseConfig);
       <input type="password" class="form-control" placeholder="pw" id="pw">
     </div>
     <button type="submit" class="btn btn-primary" id="login">로그인하기</button>
+    <button type="submit" class="btn btn-primary" id="logout">로그아웃</button>
   </div>
 
 
@@ -85,6 +86,10 @@ firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
 
+    $('#logout').click(function(){
+      firebase.auth().signOut()
+    })
+
     $('#login').click(function(){
       
       let email = $('#email').val() 
@@ -92,6 +97,7 @@ firebase.initializeApp(firebaseConfig);
 
       firebase.auth().signInWithEmailAndPassword(email, password).then((result) => {
         console.log(result.user)
+        window.location.href = "/index.html"
       })
     })
 
