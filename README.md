@@ -3,5 +3,7 @@
 - Typescript
 - Firebase
 - Next.js
-- KarrotFlame
 - jQuery
+- firebase
+- bootstrap
+- KarrotFlame
