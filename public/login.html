@@ -31,7 +31,8 @@ firebase.initializeApp(firebaseConfig);
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#" style="color:#FFB98B">당근마켓</a>
+      <a class="navbar-brand" href="/index.html" style="color:#FFB98B">당근마켓</a>
+      <span class="ms-auto mx-2 border-2" id="userName"></span> 
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -44,10 +45,10 @@ firebase.initializeApp(firebaseConfig);
             <a class="nav-link" href="#">Features</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
+            <a class="nav-link" href="#">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
+            <a class="nav-link" href="/upload.html" >Upload</a>
           </li>
         </ul>
       </div>
@@ -86,12 +87,32 @@ firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
 
+    // 유저정보 확인
+    let userData = localStorage.getItem('user')
+    userData && $('#userName').html(JSON.parse(userData).displayName)
+
+    firebase.auth().onAuthStateChanged((user)=>{
+      if (user) {
+        console.log(user.uid);
+        console.log(user.displayName);
+        // $('#userName').html(user.displayName);
+        localStorage.setItem('user', JSON.stringify(user))
+        if (!user) localStorage.removeItem('user')
+      }
+    })
+
+    // 정리 : 진짜 유저 로그인여부는 onAuthStateChanged가 알려줌
+    // 근데 유저정보 쓸 일이 많으면 localStorage에 넣으셈
+    // (참고) localStorage에 있는 정보는 언제나 위조가능 그래서 localStorage는 임시방편일 뿐
+    // 해킹을 막는 건 서버에서 알아서 함. 프론트엔드에선 막을 수 없음.
+
     $('#logout').click(function(){
       firebase.auth().signOut()
+      localStorage.removeItem('user')
+      window.location.href = "/index.html"
     })
 
     $('#login').click(function(){
-      
       let email = $('#email').val() 
       let password = $('#pw').val() 
 

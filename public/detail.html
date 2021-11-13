@@ -47,64 +47,43 @@ firebase.initializeApp(firebaseConfig);
             <a class="nav-link" href="/login.html">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Upload</a>
+            <a class="nav-link" href="/upload.html">Upload</a>
           </li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <div class="container mt-3">
-    <input type="text" class="form-control mt-2" id="title" placeholder="title">
-    <textarea class="form-control mt-2" id="content">content</textarea>
-    <input type="text" class="form-control mt-2" id="price" placeholder="price">
-    <input class="form-control mt-2" type="file" id="image">
-    <button class="btn btn-danger mt-3" id="send">올리기</button>
+
+  <div class="container">
+    <div class="detail-pic my-4"></div>
+      <div>
+        <h5>일화아앙</h5>
+        <hr>
+        <h5 class="title"></h5>
+        <p class="date"></p>
+        <p class="price"></p>
+      </div>    
   </div>
+
+
 
   <script>
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    $('#send').click(function(){
-      let file = document.querySelector('#image').files[0];
-      let storageRef = storage.ref();
-      let storagePath = storageRef.child('image/' + file.name);
-      let sendImageData = storagePath.put(file)
+    let queryString = new URLSearchParams(window.location.search)
 
-      sendImageData.on( 'state_changed', 
-        // 변화시 동작하는 함수 
-        null, 
-        //에러시 동작하는 함수
-        (error) => {
-          console.error('실패사유는', error);
-        }, 
-        // 성공시 동작하는 함수
-        () => {
-          sendImageData.snapshot.ref.getDownloadURL().then((url) => {
-            console.log('업로드된 경로는', url);
-            let data = { 
-            제목: $('#title').val(), 
-            가격: +$('#price').val(),
-            내용: $('#content').val(),
-            날짜 : new Date(),
-            이미지 : `${url}`
-          }
-          db.collection('product').add(data).then((res)=>{
-            console.log(res.id);
-            window.location.href = "/index.html"
-          }).catch((err) => { 
-            console.log(err)
-          })
-          });
-        }
-      );
-// 일반적으로 
-// 1. 이미지 먼저 업로드하고
-// 2. 성공하면 DB에 이미지 url 저장한다.
-  })
+    db.collection('product').doc(queryString.get('id')).get().then((result)=> {
+      let data = result.data();
+      $('.title').html(data.제목)
+      $('.price').html(`${data.가격}원`)
+      $('.detail-pic').css('background-image', `url(${data.이미지})`)
+    })
 
   </script>
+
+
 
 </body>
 

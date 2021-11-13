@@ -31,7 +31,7 @@ firebase.initializeApp(firebaseConfig);
 
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#" style="color:#FFB98B">당근마켓</a>
+      <a class="navbar-brand" href="/" style="color:#FFB98B">당근마켓</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -44,10 +44,10 @@ firebase.initializeApp(firebaseConfig);
             <a class="nav-link" href="#">Features</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="#">Pricing</a>
+            <a class="nav-link" href="/login.html">Login</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled">Disabled</a>
+            <a class="nav-link" href="/upload.html">Upload</a>
           </li>
         </ul>
       </div>
@@ -67,7 +67,7 @@ firebase.initializeApp(firebaseConfig);
         <div class="product">
           <div class="thumbnail" style="background-image: url('${doc.data().이미지}')"></div>
           <div class="flex-grow-1 p-4">
-            <h5 class="title">${doc.data().제목}</h5>
+            <h5 class="title"><a href="/detail.html?id=${doc.id}">${doc.data().제목}</a></h5>
             <p class="date">2021년11월13일</p>
             <p class="price">${doc.data().가격}원</p>
             <p class="float-end">🤍0</p>
