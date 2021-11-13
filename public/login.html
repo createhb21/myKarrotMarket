@@ -69,29 +69,43 @@ firebase.initializeApp(firebaseConfig);
   </div>
 
 
+  <div class="container mt-3">
+    <div class="mb-3">
+      <input type="email" class="form-control" placeholder="email" id="email">
+    </div>
+    <div class="mb-3">
+      <input type="password" class="form-control" placeholder="pw" id="pw">
+    </div>
+    <button type="submit" class="btn btn-primary" id="login">로그인하기</button>
+  </div>
+
+
 
   <script>
     const db = firebase.firestore();
     const storage = firebase.storage();
 
+    $('#login').click(function(){
+      
+      let email = $('#email').val() 
+      let password = $('#pw').val() 
+
+      firebase.auth().signInWithEmailAndPassword(email, password).then((result) => {
+        console.log(result.user)
+      })
+    })
+
     $('#register').click(function(){
 
-      var 이메일 = $('#email-new').val() 
-      var 패스워드 = $('#pw-new').val() 
+      let email = $('#email-new').val() 
+      let password = $('#pw-new').val() 
+      let userName = $('#name-new').val() 
 
-      firebase.auth().createUserWithEmailAndPassword(이메일, 패스워드).then((result)=>{
-      console.log(result)
-      console.log(result.user)
-      window.location.href = "/index.html"
+      firebase.auth().createUserWithEmailAndPassword(email, password)
+        .then((result) => {
+          result.user.updateProfile( {displayName : userName} )
+        })
     })
-    })
-
-    
-
-
-
-
-
   </script>
 
 
