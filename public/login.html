@@ -93,8 +93,6 @@ firebase.initializeApp(firebaseConfig);
 
     firebase.auth().onAuthStateChanged((user)=>{
       if (user) {
-        console.log(user.uid);
-        console.log(user.displayName);
         // $('#userName').html(user.displayName);
         localStorage.setItem('user', JSON.stringify(user))
         if (!user) localStorage.removeItem('user')
@@ -117,20 +115,22 @@ firebase.initializeApp(firebaseConfig);
       let password = $('#pw').val() 
 
       firebase.auth().signInWithEmailAndPassword(email, password).then((result) => {
-        console.log(result.user)
         window.location.href = "/index.html"
       })
     })
 
     $('#register').click(function(){
 
-      let email = $('#email-new').val() 
-      let password = $('#pw-new').val() 
-      let userName = $('#name-new').val() 
+      const email = $('#email-new').val() 
+      const password = $('#pw-new').val() 
+      const userName = $('#name-new').val() 
 
       firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((result) => {
+          const userData = { name : userName, email : email }
+          db.collection('user').doc(result.user.uid).set(userData)
           result.user.updateProfile( {displayName : userName} )
+          // window.location.href = '/index.html'
         })
     })
   </script>

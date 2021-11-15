@@ -58,13 +58,13 @@ firebase.initializeApp(firebaseConfig);
   <div class="container">
     <div class="detail-pic my-4"></div>
       <div>
-        <h5 class="username"></h5>
+        <h5 class="author"></h5>
         <hr>
         <h5 class="title"></h5>
         <p class="content"></p>
         <p class="date"></p>
         <p class="price"></p>
-    <button class="btn btn-outline-secondary id="edit">수정</button>
+        <button class="btn btn-outline-secondary" id="edit">수정</button>
       </div>    
   </div>
 
@@ -76,13 +76,20 @@ firebase.initializeApp(firebaseConfig);
 
     let queryString = new URLSearchParams(window.location.search)
 
+    
+
     db.collection('product').doc(queryString.get('id')).get().then((result)=> {
       let data = result.data();
-      $('.username').html(data.이름)
+      $('.author').html('올린사람 : ' + data.이름)
       $('.title').html(data.제목)
       $('.content').html(data.내용)
       $('.price').html(`${data.가격}원`)
       $('.detail-pic').css('background-image', `url(${data.이미지})`)
+
+      const isUserON = JSON.parse(localStorage.getItem('user'));
+      isUserON && isUserON.uid == data.uid 
+        ? $('#edit').removeClass('hidden')
+        : $('#edit').addClass('hidden');
     })
 
     $('#edit').click(function(){
