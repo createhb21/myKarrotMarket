@@ -83,12 +83,15 @@ firebase.initializeApp(firebaseConfig);
         () => {
           sendImageData.snapshot.ref.getDownloadURL().then((url) => {
             console.log('업로드된 경로는', url);
+
             let data = { 
             제목: $('#title').val(), 
             가격: +$('#price').val(),
             내용: $('#content').val(),
             날짜 : new Date(),
-            이미지 : `${url}`
+            이미지 : `${url}`,
+            uid : JSON.parse(localStorage.getItem('user')).uid,
+            이름 : JSON.parse(localStorage.getItem('user')).displayName,
           }
           db.collection('product').add(data).then((res)=>{
             console.log(res.id);
