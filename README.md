@@ -1,6 +1,6 @@
 
 # myKarrotMarket
 - Firebase
-- Vanila Javascript
+- Vanilla Javascript
 - jQuery
 - Bootstrap
