@@ -65,6 +65,7 @@ firebase.initializeApp(firebaseConfig);
         <p class="date"></p>
         <p class="price"></p>
         <button class="btn btn-outline-secondary" id="edit">수정</button>
+        <button class="btn btn-outline-secondary" id="chat">채팅</button>
       </div>    
   </div>
 
@@ -74,15 +75,30 @@ firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    let queryString = new URLSearchParams(window.location.search)
+    let from_uid = JSON.parse(localStorage.getItem('user')).uid; 
+    let to_uid = '';
+    let product = '';
 
-    
+    $('#chat').click(function(){
+      let data = {
+        participants : [from_uid, to_uid],
+        product : product, // 상품명
+        date : new Date().toString(),
+      };
+      db.collection('chatroom').add(data)
+    })
+
+    let queryString = new URLSearchParams(window.location.search)
 
     db.collection('product').doc(queryString.get('id')).get().then((result)=> {
       let data = result.data();
+      to_uid = data.uid
+      product = data.제목
+
       $('.author').html('올린사람 : ' + data.이름)
       $('.title').html(data.제목)
       $('.content').html(data.내용)
+      $('.date').html(data.날짜)
       $('.price').html(`${data.가격}원`)
       $('.detail-pic').css('background-image', `url(${data.이미지})`)
 

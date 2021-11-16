@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+  <link href="main.css" rel="stylesheet" >
+</head>
+<body>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-storage.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+  <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyA13fPLsmWtxeYgQvErnCerwxfx6-tuMy8",
+  authDomain: "mykarrotmarket.firebaseapp.com",
+  projectId: "mykarrotmarket",
+  storageBucket: "mykarrotmarket.appspot.com",
+  messagingSenderId: "536473751113",
+  appId: "1:536473751113:web:239d12328824dc9847b998",
+  measurementId: "G-ZSV19N54T6"
+};
+firebase.initializeApp(firebaseConfig);
+  </script>
+
+
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="/index.html" style="color:#FFB98B">당근마켓</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="#">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Features</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login.html">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/upload.html">Upload</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+
+  <div class="container p-4 detail">
+    <div class="row">
+      <div class="col-3 p-0">
+        <ul class="list-group chat-list">
+          <li class="list-group-item">
+            <h6>채팅방1</h6>
+            <h6 class="text-small">채팅방아이디</h6>
+          </li>
+        </ul>
+      </div>
+      <div class="col-9 p-0">
+        <div class="chat-room">
+          <ul class="list-group chat-content"></ul>
+          <div class="input-group">
+            <input class="form-control" id="chat-input">
+            <button class="btn btn-secondary" id="send">전송</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
+
+
+
+  <script>
+
+
+    const db = firebase.firestore();
+    const storage = firebase.storage();
+    let myUid = JSON.parse( localStorage.getItem('user')) .uid;
+    
+
+
+    $('#send').click(function(){
+
+      let data = {
+        content : $('#chat-input').val(),
+        date : new Date().toString(),
+        uid : myUid,
+      }
+      // 서브 콜렉션에 게시물 저장하는법
+      db.collection('chatroom').doc(chatroom_id).collection('messages').add(data)
+  })
+
+    let chatroom_id;
+
+    // chatroom 컬렉션에서 내 uid가 포함된 게시물 다 가져와
+    // where => query 할 때 이용하는 함수 => query 한다 == 많은 데이터 중에 원하는 것만 뽑는 행위, where('필드', '연산자', '값')
+    db.collection('chatroom').where('participants', 'array-contains', myUid).get().then((result) => { // array 자료에 query 주는 법 => array에서 찾고 싶으면 array-container 쓰셈
+      result.forEach((a)=> {
+        let template = `
+          <li class="list-group-item" style="cursor: pointer">
+            <h6>${a.data().product }</h6>
+            <h6 class="text-small">${a.id}</h6>
+          </li>
+        `
+        $('.chat-list').append(template)
+
+        $('.list-group-item').click(function(e) {
+          chatroom_id = $(this).children('.text-small').text()
+
+          e.stopImmediatePropagation();
+
+          // 실시간 변동사항 반영하기 => onSnapshot()
+          // data 가져올 때 정렬 => orderBy('필드값')
+          db.collection('chatroom').doc(chatroom_id).collection('messages').orderBy('date').onSnapshot(
+            (result) => {
+              $('.chat-content').html('')
+              result.forEach((a) => {
+                // console.log(a.data());
+                let tempate = `
+                <li><span class="chat-box">${a.data().content}</span></li>
+                `
+
+                $('.chat-content').append(tempate)
+              })
+            }
+          )
+        })
+      })
+    })
+
+    // query 문법 추가설명
+    // .where('product', '==', '고구마')   
+    // A or B 검색은 ? 이것도 찾아주시고 저것도 찾아주세요..!
+    // .where('product', 'in', ['고구마', '돼지감자'])
+    // 이런 식으로 쓰면 , 대신 부등호 쓰는게 아니라 in 을 써야함
+    // 근데, 특이 Case.. 첫번째 인자가 Array다? 
+    // .where('who', 'array-contains-any', ['고구마', '돼지감자'])
+    // array-contains-any 쓰면 됨
+    // 여러가지 field 동시 검색은 안됩니다
+
+    // Q. 메시지 보내기는 어케 함? => 그냥 게시물 발행과 똑같음 근데 어디다가 게시물 발행할거임? => chatroom의 sub collection에 저장하면 채팅 기능 끝..!
+
+
+
+  </script>
+
+
+
+</body>
+
+</html>

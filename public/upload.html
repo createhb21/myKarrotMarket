@@ -88,7 +88,7 @@ firebase.initializeApp(firebaseConfig);
             제목: $('#title').val(), 
             가격: +$('#price').val(),
             내용: $('#content').val(),
-            날짜 : new Date(),
+            날짜 : new Date().toString(),
             이미지 : `${url}`,
             uid : JSON.parse(localStorage.getItem('user')).uid,
             이름 : JSON.parse(localStorage.getItem('user')).displayName,

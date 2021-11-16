@@ -68,7 +68,7 @@ firebase.initializeApp(firebaseConfig);
           <div class="thumbnail" style="background-image: url('${doc.data().이미지}')"></div>
           <div class="flex-grow-1 p-4">
             <h5 class="title"><a href="/detail.html?id=${doc.id}">${doc.data().제목}</a></h5>
-            <p class="date">2021년11월13일</p>
+            <p class="date">${doc.data().날짜}</p>
             <p class="price">${doc.data().가격}원</p>
             <p class="float-end">🤍0</p>
           </div>
