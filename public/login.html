@@ -127,10 +127,11 @@ firebase.initializeApp(firebaseConfig);
 
       firebase.auth().createUserWithEmailAndPassword(email, password)
         .then((result) => {
-          const userData = { name : userName, email : email }
+          // firebase에 유저정보 user 콜렉션에 저장
+          const userData = { name : userName, email : email, role : "consumer"}
           db.collection('user').doc(result.user.uid).set(userData)
+          // 구글 어센틱에 유저 네임 업데이트
           result.user.updateProfile( {displayName : userName} )
-          // window.location.href = '/index.html'
         })
     })
   </script>

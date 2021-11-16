@@ -102,11 +102,18 @@ firebase.initializeApp(firebaseConfig);
       $('.price').html(`${data.가격}원`)
       $('.detail-pic').css('background-image', `url(${data.이미지})`)
 
-      const isUserON = JSON.parse(localStorage.getItem('user'));
-      isUserON && isUserON.uid == data.uid 
+
+      const isUserOn = JSON.parse(localStorage.getItem('user'));
+
+      db.collection('user').doc(isUserOn.uid).get().then((a) => (a.data().role === "admin") && $('#edit').removeClass('hidden'))
+      isUserOn && isUserOn.uid == data.uid 
         ? $('#edit').removeClass('hidden')
         : $('#edit').addClass('hidden');
+
+      
     })
+
+    
 
     $('#edit').click(function(){
       window.location.href = `/edit.html?id=${queryString.get('id')}`
