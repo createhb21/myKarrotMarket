@@ -38,16 +38,16 @@ firebase.initializeApp(firebaseConfig);
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login.html">Login</a>
+            <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/upload.html">Upload</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/chat.html">ChatRoom</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login.html">Login</a>
           </li>
         </ul>
       </div>
@@ -58,12 +58,7 @@ firebase.initializeApp(firebaseConfig);
   <div class="container p-4 detail">
     <div class="row">
       <div class="col-3 p-0">
-        <ul class="list-group chat-list">
-          <li class="list-group-item">
-            <h6>채팅방1</h6>
-            <h6 class="text-small">채팅방아이디</h6>
-          </li>
-        </ul>
+        <ul class="list-group chat-list"></ul>
       </div>
       <div class="col-9 p-0">
         <div class="chat-room">
@@ -84,12 +79,9 @@ firebase.initializeApp(firebaseConfig);
 
     const db = firebase.firestore();
     const storage = firebase.storage();
-    let myUid = JSON.parse( localStorage.getItem('user')) .uid;
-    
-
+    let myUid = JSON.parse(localStorage.getItem('user')).uid;
 
     $('#send').click(function(){
-
       let data = {
         content : $('#chat-input').val(),
         date : new Date().toString(),
@@ -97,7 +89,8 @@ firebase.initializeApp(firebaseConfig);
       }
       // 서브 콜렉션에 게시물 저장하는법
       db.collection('chatroom').doc(chatroom_id).collection('messages').add(data)
-  })
+      $('#chat-input').val('');
+    })
 
     let chatroom_id;
 
@@ -107,7 +100,7 @@ firebase.initializeApp(firebaseConfig);
       result.forEach((a)=> {
         let template = `
           <li class="list-group-item" style="cursor: pointer">
-            <h6>${a.data().product }</h6>
+            <h6>${a.data().product}</h6>
             <h6 class="text-small">${a.id}</h6>
           </li>
         `
@@ -124,10 +117,12 @@ firebase.initializeApp(firebaseConfig);
             (result) => {
               $('.chat-content').html('')
               result.forEach((a) => {
-                // console.log(a.data());
-                let tempate = `
-                <li><span class="chat-box">${a.data().content}</span></li>
-                `
+                let template;
+                if (a.data().uid == myUid) {
+                  tempate = `<li><span class="chat-box mine">${a.data().content}</span></li>`
+                } else {
+                  tempate = `<li><span class="chat-box">${a.data().content}</span></li>`
+                }
                 $('.chat-content').append(tempate)
               })
             }

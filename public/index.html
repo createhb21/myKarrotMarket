@@ -38,16 +38,16 @@ firebase.initializeApp(firebaseConfig);
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login.html">Login</a>
+            <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/upload.html">Upload</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/chat.html">ChatRoom</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login.html">Login</a>
           </li>
         </ul>
       </div>
@@ -61,15 +61,15 @@ firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
     const storage = firebase.storage();
 
-    db.collection('product').get().then((snapshot)=>{
+    db.collection('product').orderBy('date', 'desc').get().then((snapshot)=>{
       snapshot.forEach((doc)=>{
         let template = `
         <div class="product">
-          <div class="thumbnail" style="background-image: url('${doc.data().이미지}')"></div>
+          <div class="thumbnail" style="background-image: url('${doc.data().image}')"></div>
           <div class="flex-grow-1 p-4">
-            <h5 class="title"><a href="/detail.html?id=${doc.id}">${doc.data().제목}</a></h5>
-            <p class="date">${doc.data().날짜}</p>
-            <p class="price">${doc.data().가격}원</p>
+            <h5 class="title"><a href="/detail.html?id=${doc.id}">${doc.data().title}</a></h5>
+            <p class="date">${doc.data().date}</p>
+            <p class="price">${doc.data().price}원</p>
             <p class="float-end">🤍0</p>
           </div>
         </div>

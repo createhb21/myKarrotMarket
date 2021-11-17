@@ -38,16 +38,16 @@ firebase.initializeApp(firebaseConfig);
       <div class="collapse navbar-collapse" id="navbarNav">
         <ul class="navbar-nav">
           <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#">Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Features</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login.html">Login</a>
+            <a class="nav-link active" aria-current="page" href="/index.html">Home</a>
           </li>
           <li class="nav-item">
             <a class="nav-link" href="/upload.html">Upload</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/chat.html">ChatRoom</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/login.html">Login</a>
           </li>
         </ul>
       </div>
@@ -79,45 +79,58 @@ firebase.initializeApp(firebaseConfig);
     let to_uid = '';
     let product = '';
 
+    const isUserOn = JSON.parse(localStorage.getItem('user'));
+    let queryString = new URLSearchParams(window.location.search)
+
+    db.collection('product').doc(queryString.get('id')).get().then((result)=> {
+      let data = result.data();
+      to_uid = data.uid
+      product = data.title
+
+      $('.author').html('올린사람 : ' + data.userName)
+      $('.title').html(data.title)
+      $('.content').html(data.content)
+      $('.date').html(data.date)
+      $('.price').html(`${data.price}원`)
+      $('.detail-pic').css('background-image', `url(${data.image})`)
+
+
+
+      db.collection('user').doc(isUserOn.uid).get().then((a) => (a.data().role === "admin") && $('#edit').removeClass('hidden'))
+      if (isUserOn && isUserOn.uid == data.uid) {
+        $('#edit').removeClass('hidden')
+        $('#chat').addClass('hidden')
+      } else {
+        $('#edit').addClass('hidden');
+        $('#chat').removeClass('hidden')
+      }
+    })
+
+    $('#edit').click(function(){
+      window.location.href = `/edit.html?id=${queryString.get('id')}`
+    })
+
     $('#chat').click(function(){
       let data = {
         participants : [from_uid, to_uid],
         product : product, // 상품명
         date : new Date().toString(),
       };
-      db.collection('chatroom').add(data)
+      db.collection('chatroom').add(data).then(()=> {
+        window.location.href = '/chat.html';
+      })
+      // db.collection('chatroom').get().then((snapshot)=>{
+      //   snapshot.forEach((res)=>{
+      //     console.log(res.data())
+      //   });
+      // })
+      // const newChatData = {
+      //       participants : [from_uid, to_uid],
+      //       product : product, // 상품명
+      //       date : new Date().toString(),
+      //     };
     })
 
-    let queryString = new URLSearchParams(window.location.search)
-
-    db.collection('product').doc(queryString.get('id')).get().then((result)=> {
-      let data = result.data();
-      to_uid = data.uid
-      product = data.제목
-
-      $('.author').html('올린사람 : ' + data.이름)
-      $('.title').html(data.제목)
-      $('.content').html(data.내용)
-      $('.date').html(data.날짜)
-      $('.price').html(`${data.가격}원`)
-      $('.detail-pic').css('background-image', `url(${data.이미지})`)
-
-
-      const isUserOn = JSON.parse(localStorage.getItem('user'));
-
-      db.collection('user').doc(isUserOn.uid).get().then((a) => (a.data().role === "admin") && $('#edit').removeClass('hidden'))
-      isUserOn && isUserOn.uid == data.uid 
-        ? $('#edit').removeClass('hidden')
-        : $('#edit').addClass('hidden');
-
-      
-    })
-
-    
-
-    $('#edit').click(function(){
-      window.location.href = `/edit.html?id=${queryString.get('id')}`
-    })
 
   </script>
 
